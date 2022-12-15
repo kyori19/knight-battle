@@ -15,12 +15,16 @@ data class KnightBattle(
     private val current = history.lastOrNull()
     val candidates = current?.let { current ->
         knightMoves.mapNotNull { current.move(it) }.filter { it !in history }
-    }
+    } ?: size.range.map { x ->
+        size.range.map { y ->
+            Location(size, x, y)
+        }
+    }.flatten()
 
-    val winner: Player? = if (candidates?.size == 0) { !nextPlayer } else { null }
+    val winner: Player? = if (candidates.isEmpty()) { !nextPlayer } else { null }
 
     fun move(next: Location): KnightBattle {
-        assert(next.isValid() && candidates?.let { next in it } ?: true)
+        assert(next.isValid() && candidates.let { next in it })
         return copy(history = history + next)
     }
 
