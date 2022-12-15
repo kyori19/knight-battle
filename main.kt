@@ -1,23 +1,18 @@
 import games.KnightBattle
 import games.utils.Location
+import games.utils.Player
 import games.utils.size
 
 fun main() {
-    var game = KnightBattle(5.size)
-    while (game.winner == null) {
-        println(game)
-        println("Next: ${game.nextPlayer}")
-        val can = game.candidates
-        if (can != null) {
-            println("Candidates: $can")
-        }
-
-        val loc = readln().split(" ")
-            .map(String::toInt)
-            .let { game.location(it.first(), it.last()) }
-        game = game.move(loc)
-    }
-    println(game)
+    println("Player 1 can win? -> ${playerOneCanWin(KnightBattle(5.size, listOf(Location(5.size, 0, 0))))}")
 }
 
-fun KnightBattle.location(x: Int, y: Int) = Location(size, x, y)
+fun playerOneCanWin(game: KnightBattle): Boolean =
+    if (game.winner == null) {
+        when (game.nextPlayer) {
+            Player.PLAYER_ONE -> game.candidates!!.any { playerOneCanWin(game.move(it)) }
+            Player.PLAYER_TWO -> game.candidates!!.all { playerOneCanWin(game.move(it)) }
+        }
+    } else {
+        game.winner == Player.PLAYER_ONE
+    }
