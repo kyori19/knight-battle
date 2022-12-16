@@ -7,15 +7,17 @@ import solvers.Solver
 import solvers.UCT
 
 fun main() {
-    val game5 = KnightBattle(5.size)
-    println("Player 1 can win? -> ${playerOneCanWin(game5)}")
+    println("Player 1 can win? -> ${playerOneCanWin(KnightBattle(5.size))}")
+
+    println("200 times UCT v.s. MC")
+    val (first, second) = measureRatio(KnightBattle(10.size), UCT(100, 0.8) to MC(100))
+    println("UCT won ${(first + second) / 2}% (First $first%, Second $second%)")
 
     val isCI = System.getenv("CI") == "true"
-    val sample = playWithSolvers(game5, if (isCI) { MC(100) } else { Manual }, MC(100))
-    println("${if (isCI) { "MC" } else { "Manual" }} v.s. MC -> $sample")
-
-    val be = playWithSolvers(KnightBattle(10.size), MC(1000), UCT(1000, 0.7))
-    println("MC v.s. UCT -> $be")
+    if (!isCI) {
+        val sample = playWithSolvers(KnightBattle(8.size), Manual, UCT(1000, 0.7))
+        println("Manual v.s. MC -> $sample")
+    }
 }
 
 fun playerOneCanWin(game: KnightBattle): Boolean =
@@ -39,3 +41,7 @@ fun playWithSolvers(initial: KnightBattle, player1: Solver, player2: Solver): Kn
     }
     return game
 }
+
+fun measureRatio(game: KnightBattle, solvers: Pair<Solver, Solver>): Pair<Int, Int> =
+    (0 until 100).count { playWithSolvers(game, solvers.first, solvers.second).winner == Player.PLAYER_ONE } to
+            (0 until 100).count { playWithSolvers(game, solvers.second, solvers.first).winner == Player.PLAYER_TWO }
