@@ -2,16 +2,16 @@ import games.KnightBattle
 import games.utils.Player
 import games.utils.size
 import solvers.MC
+import solvers.Manual
+import solvers.Solver
 
 fun main() {
-    println("Player 1 can win? -> ${playerOneCanWin(KnightBattle(5.size))}")
+    val game5 = KnightBattle(5.size)
+    println("Player 1 can win? -> ${playerOneCanWin(game5)}")
 
-    var game = KnightBattle(5.size)
-    val solver = MC(1000)
-    while (game.winner == null) {
-        game = game.move(solver.solve(game))
-    }
-    println("MC v.s. MC -> $game")
+    val isCI = System.getenv("CI") == "true"
+    val game = playWithSolvers(game5, if (isCI) { MC(100) } else { Manual }, MC(100))
+    println("${if (isCI) { "MC" } else { "Manual" }} v.s. MC -> $game")
 }
 
 fun playerOneCanWin(game: KnightBattle): Boolean =
@@ -23,3 +23,15 @@ fun playerOneCanWin(game: KnightBattle): Boolean =
     } else {
         game.winner == Player.PLAYER_ONE
     }
+
+fun playWithSolvers(initial: KnightBattle, player1: Solver, player2: Solver): KnightBattle {
+    var game = initial
+    while (game.winner == null) {
+        val solver = when (game.nextPlayer) {
+            Player.PLAYER_ONE -> player1
+            Player.PLAYER_TWO -> player2
+        }
+        game = game.move(solver.solve(game))
+    }
+    return game
+}

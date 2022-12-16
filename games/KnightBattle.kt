@@ -12,12 +12,14 @@ data class KnightBattle(
         else -> Player.PLAYER_TWO
     }
 
+    fun Location(x: Int, y: Int) = Location(size, x, y)
+
     private val current = history.lastOrNull()
     val candidates = current?.let { current ->
         knightMoves.mapNotNull { current.move(it) }.filter { it !in history }
     } ?: size.range.map { x ->
         size.range.map { y ->
-            Location(size, x, y)
+            Location(x, y)
         }
     }.flatten()
 
