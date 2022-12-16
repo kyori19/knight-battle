@@ -1,13 +1,13 @@
 import games.KnightBattle
 import games.utils.Player
 import games.utils.size
-import solvers.Solver
+import solvers.MC
 
 fun main() {
     println("Player 1 can win? -> ${playerOneCanWin(KnightBattle(5.size))}")
 
     var game = KnightBattle(5.size)
-    val solver = Solver
+    val solver = MC(1000)
     while (game.winner == null) {
         game = game.move(solver.solve(game))
     }
