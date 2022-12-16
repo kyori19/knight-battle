@@ -4,14 +4,18 @@ import games.utils.size
 import solvers.MC
 import solvers.Manual
 import solvers.Solver
+import solvers.UCT
 
 fun main() {
     val game5 = KnightBattle(5.size)
     println("Player 1 can win? -> ${playerOneCanWin(game5)}")
 
     val isCI = System.getenv("CI") == "true"
-    val game = playWithSolvers(game5, if (isCI) { MC(100) } else { Manual }, MC(100))
-    println("${if (isCI) { "MC" } else { "Manual" }} v.s. MC -> $game")
+    val sample = playWithSolvers(game5, if (isCI) { MC(100) } else { Manual }, MC(100))
+    println("${if (isCI) { "MC" } else { "Manual" }} v.s. MC -> $sample")
+
+    val be = playWithSolvers(KnightBattle(10.size), MC(1000), UCT(1000, 0.7))
+    println("MC v.s. UCT -> $be")
 }
 
 fun playerOneCanWin(game: KnightBattle): Boolean =
