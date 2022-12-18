@@ -1,17 +1,22 @@
 import games.KnightBattle
 import games.utils.Player
 import games.utils.size
-import solvers.MC
-import solvers.Manual
-import solvers.Solver
-import solvers.UCT
+import solvers.*
 
 fun main() {
     println("Player 1 can win? -> ${playerOneCanWin(KnightBattle(5.size))}")
 
-    println("200 times UCT v.s. MC")
-    val (first, second) = measureRatio(KnightBattle(10.size), UCT(100, 0.8) to MC(100))
-    println("UCT won ${(first + second) / 2}% (First $first%, Second $second%)")
+    run {
+        println("200 times MinMax v.s. MC")
+        val (first, second) = measureRatio(KnightBattle(10.size), MinMax(20) to MC(100))
+        println("MinMax won ${(first + second) / 2}% (First $first%, Second $second%)")
+    }
+
+    run {
+        println("200 times UCT v.s. MC")
+        val (first, second) = measureRatio(KnightBattle(10.size), UCT(100, 0.8) to MC(100))
+        println("UCT won ${(first + second) / 2}% (First $first%, Second $second%)")
+    }
 
     val isCI = System.getenv("CI") == "true"
     if (!isCI) {
