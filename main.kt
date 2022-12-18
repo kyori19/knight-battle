@@ -4,7 +4,7 @@ import games.utils.size
 import solvers.*
 
 fun main() {
-    println("Player 1 can win? -> ${playerOneCanWin(KnightBattle(5.size))}")
+    println("Player 1 can win? -> ${playerOneCanWin(KnightBattle(5.size).run { move(Location(0, 0)) })}")
 
     run {
         println("200 times MinMax v.s. MC")
